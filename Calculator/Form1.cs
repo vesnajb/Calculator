@@ -7,11 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace Calculator
 {
     public partial class Form1 : Form
     {
+        //upotreba na globalizacija
+        NumberFormatInfo nfi = new CultureInfo("en-US").NumberFormat;
+
         int brOperacii = 0;
         Decimal vrednost = 0;
         String operacija = "";
@@ -30,6 +34,10 @@ namespace Calculator
             Button b = (Button)sender;
             txt_result.Text += b.Text;
 
+            //Enable/Disable na tockata, za da ne moze da se pisuvaat broevi so poveke od 1 tocka
+            if (b.Text == ".")
+                b.Enabled = false;
+
             operacija_klik = false;
         }
 
@@ -43,27 +51,28 @@ namespace Calculator
                 switch (operacija)
                 {
                     case "+":
-                        vrednost += Decimal.Parse(txt_result.Text);
+                        vrednost += Decimal.Parse(txt_result.Text, nfi);
                         break;
                     case "-":
-                        vrednost -= Decimal.Parse(txt_result.Text);
+                        vrednost -= Decimal.Parse(txt_result.Text, nfi);
                         break;
                     case "*":
-                        vrednost *= Decimal.Parse(txt_result.Text);
+                        vrednost *= Decimal.Parse(txt_result.Text, nfi);
                         break;
                     case "/":
-                        vrednost /= Decimal.Parse(txt_result.Text);
+                        vrednost /= Decimal.Parse(txt_result.Text, nfi);
                         break;
                     default:
                         break;
                 }
             }
             else
-                vrednost = Decimal.Parse(txt_result.Text);
+                vrednost = Decimal.Parse(txt_result.Text, nfi);
 
             operacija = b.Text;
-            lbl_izraz.Text = vrednost + " " + operacija;
+            lbl_izraz.Text = vrednost.ToString(nfi) + " " + operacija;
             operacija_klik = true;
+            button11.Enabled = true; //enable na tockata
 
         }
 
@@ -73,16 +82,16 @@ namespace Calculator
             switch (operacija)
             {
                 case "+":
-                    txt_result.Text = (vrednost + Decimal.Parse(txt_result.Text)).ToString();
+                    txt_result.Text = (vrednost + Decimal.Parse(txt_result.Text, nfi)).ToString(nfi);
                     break;
                 case "-":
-                    txt_result.Text = (vrednost - Decimal.Parse(txt_result.Text)).ToString();
+                    txt_result.Text = (vrednost - Decimal.Parse(txt_result.Text, nfi)).ToString(nfi);
                     break;
                 case "*":
-                    txt_result.Text = (vrednost * Decimal.Parse(txt_result.Text)).ToString();
+                    txt_result.Text = (vrednost * Decimal.Parse(txt_result.Text, nfi)).ToString(nfi);
                     break;
                 case "/":
-                    txt_result.Text = (vrednost / Decimal.Parse(txt_result.Text)).ToString();
+                    txt_result.Text = (vrednost / Decimal.Parse(txt_result.Text, nfi)).ToString(nfi);
                     break;
                 default:
                     break;
@@ -90,6 +99,21 @@ namespace Calculator
             vrednost = 0;
             brOperacii = 0;
             operacija_klik = true;
+            button11.Enabled = true; //enable na tockata
+        }
+
+        private void buttonCE_Click(object sender, EventArgs e)
+        {
+            txt_result.Text = "";
+            button11.Enabled = true; //enable na tockata
+        }
+
+        private void buttonC_Click(object sender, EventArgs e)
+        {
+            txt_result.Text = "";
+            vrednost = 0;
+            lbl_izraz.Text = "";
+            button11.Enabled = true; //enable na tockata
         }
     }
 }
